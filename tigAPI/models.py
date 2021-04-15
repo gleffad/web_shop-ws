@@ -9,7 +9,7 @@ class Product(models.Model):
     discount = models.IntegerField(default=0)
     quantity = models.IntegerField(default=0)
     quantity_saled = models.IntegerField(default=0)
-    comment = models.TextField()
+    comment = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
 
 # Create your models here.
