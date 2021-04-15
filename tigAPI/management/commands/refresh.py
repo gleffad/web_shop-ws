@@ -28,10 +28,10 @@ class Command(BaseCommand):
                     'comment': product['comments']
                 })
 
-                # print(product['name'])
-                
                 if serializer.is_valid():
                     serializer.save()
                     self.stdout.write(self.style.SUCCESS('['+time.ctime()+'] Successfully added product id="%s"' % product['id']))
                 else :
-                    print(serializer.errors)
+                    self.stderr(self.style.ERROR(serializer.errors))
+
+        self.stdout.write('['+time.ctime()+'] Refresh ran successfully')
