@@ -5,20 +5,19 @@ from tigAPI.config import baseUrl
 import requests
 import time
 
+
 class Command(BaseCommand):
-    help = 'Refresh Products list'
-
     def handle(self, *args, **options):
+        # product refresh
         self.stdout.write('['+time.ctime()+'] Refreshing list of products...')
-
         ids = Product.objects.values_list('tigID', flat=True)
         response = requests.get(baseUrl+'products/')
         jsondata = response.json()
         for product in jsondata:
             if product['id'] not in ids:
-                serializer = ProductSerializer(data={ 
+                serializer = ProductSerializer(data={
                     'tigID': int(product['id']),
-                    'name': str(product['name']), 
+                    'name': str(product['name']),
                     'price': float(product['price']),
                     'sale': bool(product['sale']),
                     'sale_price': (product['price'] - ((product['discount'] * product['price']) / 100)) if product['sale'] else 0,
@@ -27,11 +26,28 @@ class Command(BaseCommand):
                     'quantity_saled': int(0),
                     'comment': product['comments']
                 })
-
                 if serializer.is_valid():
                     serializer.save()
-                    self.stdout.write(self.style.SUCCESS('['+time.ctime()+'] Successfully added product id="%s"' % product['id']))
-                else :
+                    self.stdout.write(self.style.SUCCESS(
+                        '['+time.ctime()+'] Successfully added product id="%s"' % product['id']))
+                else:
                     self.stderr(self.style.ERROR(serializer.errors))
-
-        self.stdout.write('['+time.ctime()+'] Refresh ran successfully')
+        self.stdout.write('[' + time.ctime() + '] Refresh ran successfully')
+        # Transaction refresh
+        self.stdout.write('['+time.ctime()+'] Refreshing data...')
+        response = requests.get(baseUrl+'products/')
+        jsondata = response.json()
+        ProductQuantity.objects.all().delete()
+        for product in jsondata:
+            serializer = ProductQuantitySerializer(data={
+                'price': str(product['price']),
+                'availability': str(product['availability']),
+                'price': str(product['sale']),
+                'tigID': int(product['id']),
+                'type': str(product['name']),
+            })
+            if serializer.is_valid():
+                serializer.save()
+                self.stdout.write(self.style.SUCCESS(
+                    '['+time.ctime()+'] Successfully added productsQuantity id="%s"' % product['id']))
+        self.stdout.write('['+time.ctime()+'] Data refresh terminated.')
