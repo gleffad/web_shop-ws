@@ -13,11 +13,3 @@ class TransactionSerializer(ModelSerializer):
     class Meta:
         model = Transaction
         fields = ('created', 'price', 'quantity', 'tigID', 'type')
-
-
-class ProductInSale(models.MoVdel):
-    created = models.DateTimeField(auto_now_add=True)
-    tigID = models.IntegerField(default='-1')
-
-    class Meta:
-        ordering = ('tigID',)
