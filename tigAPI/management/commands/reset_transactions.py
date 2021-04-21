@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from tigAPI.models import Transaction
+from tigAPI.models import Transaction as MTransaction
 from tigAPI.serializers import TransactionSerializer
 import json
 import time
@@ -13,7 +13,7 @@ class Command(BaseCommand):
         self.stdout.write('['+time.ctime()+'] Resetting transactions...')
         #log.write('['+time.ctime()+'] Resetting transactions...')
         jsondata = json.load(file)
-        Transaction.objects.all().delete()
+        MTransaction.objects.all().delete()
         for transaction in jsondata:
             serializer = TransactionSerializer(data={
                 'date': str(transaction['date']),
@@ -26,7 +26,7 @@ class Command(BaseCommand):
                 serializer.save()
                 self.stdout.write(self.style.SUCCESS(
                     '['+time.ctime()+'] Successfully added transaction from "%s"' % transaction['date']))
-        self.stdout.write('['+time.ctime()+'] Transaction reset terminated.')
-        #log.write('['+time.ctime()+'] Transaction reset terminated.')
+        self.stdout.write('['+time.ctime()+'] MTransaction reset terminated.')
+        #log.write('['+time.ctime()+'] MTransaction reset terminated.')
         file.close()
         #log.close()

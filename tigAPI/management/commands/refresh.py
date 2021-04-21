@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from tigAPI.models import Product
+from tigAPI.models import Product as MProduct
 from tigAPI.serializers import ProductSerializer
 from tigAPI.config import baseUrl
 import requests
@@ -10,7 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # product refresh
         self.stdout.write('['+time.ctime()+'] Refreshing list of products...')
-        ids = Product.objects.values_list('tigID', flat=True)
+        ids = MProduct.objects.values_list('tigID', flat=True)
         response = requests.get(baseUrl+'products/')
         jsondata = response.json()
         for product in jsondata:
