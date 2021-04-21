@@ -9,6 +9,29 @@ from tigAPI.serializers import ProductSerializer, TransactionSerializer, UserSer
 from django.http import Http404, JsonResponse, HttpResponse
 import time
 
+class ProductFish(APIView):
+    def get(self, request, format=None) :
+        products = []
+        for product in MProduct.objects.filter(category=0):
+            serializer = ProductSerializer(product)
+            products.append(serializer.data)
+        return Response(products)
+
+class ProductShellfish(APIView):
+    def get(self, request, format=None) :
+        products = []
+        for product in MProduct.objects.filter(category=1):
+            serializer = ProductSerializer(product)
+            products.append(serializer.data)
+        return Response(products)
+
+class ProductSeafood(APIView):
+    def get(self, request, format=None) :
+        products = []
+        for product in MProduct.objects.filter(category=2):
+            serializer = ProductSerializer(product)
+            products.append(serializer.data)
+        return Response(products)
 
 class Product(APIView):
     def get_object(self, tigID):
