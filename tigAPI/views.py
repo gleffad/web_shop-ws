@@ -169,7 +169,7 @@ class OnSaleProductList(APIView):
 
 class CustomComptability(APIView):
     def tranform_date(self, t):
-        return datetime.strptime(t["date"], "%Y-%m-%d %H:%M:%S.%f")
+        return datetime.strptime(t["date"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     def tranform_dollars(self, t):
         return t["quantity"] * t["price"]
@@ -180,11 +180,11 @@ class CustomComptability(APIView):
         
         iter = MProduct.objects.all()
 
-        if product_type == "poisson":
+        if product_type == "fish":
             iter = MProduct.objects.filter(category=0)
-        elif product_type == "crustaces":
+        elif product_type == "shellfish":
             iter = MProduct.objects.filter(category=1)
-        elif product_type == "fruitsDeMer":
+        elif product_type == "seafood":
             iter = MProduct.objects.filter(category=2)
 
         produits = []
@@ -199,5 +199,28 @@ class CustomComptability(APIView):
             serializer = TransactionSerializer(transaction)
             transactions.append(serializer.data)
 
-        
-        return Response(transactions)
+        data = {
+            "datetime" : list(map(self.tranform_date, transactions)),
+            "dollars" : list(map(self.tranform_dollars, transactions))
+        }
+
+        df = pd.DataFrame(data)
+
+        result = []
+        if time_format == "day":
+            result = df.groupby(pd.Grouper(key='datetime', freq='D')).sum().reset_index()
+        elif time_format == "month":
+            result = df.groupby(pd.Grouper(key='datetime', freq='M')).sum().reset_index()
+        elif time_format == "year":
+            result = df.groupby(pd.Grouper(key='datetime', freq='Y')).sum().reset_index()
+        else:
+            raise Http404
+
+        res = []
+        for i in range(0, result.shape[0]):
+            res.append({
+                "date" : str(result.datetime[i]),
+                "revenues" : result.dollars[i]
+            })
+
+        return Response(res)
