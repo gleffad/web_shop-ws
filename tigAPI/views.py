@@ -175,82 +175,29 @@ class CustomComptability(APIView):
         return t["quantity"] * t["price"]
 
     def post(self, request, fromat=None):
-        res = []
         product_type = request.data['product_type']
         time_format = request.data['time_format']
-        if product_type == "fish":
-            data_brut = serializers.serialize('json', MProduct.objects.filter(category=0))
-            df = pd.DataFrame({
-                "datetime": list(map(self.tranform_date, data_brut)),
-                "dollars": list(map(self.tranform_dollars, data_brut))
-            })
-            if time_format == "day":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='D')).sum()
-            elif time_format == "month":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='M')).sum()
-            elif time_format == "year":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='Y')).sum()
-            else:
-                raise Http404
-        elif product_type == "shellfish":
-            data_brut = serializers.serialize('json', MProduct.objects.filter(category=1))
-            df = pd.DataFrame({
-                "datetime": list(map(self.tranform_date, data_brut)),
-                "dollars": list(map(self.tranform_dollars, data_brut))
-            })
-            if time_format == "day":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='D')).sum()
-            elif time_format == "month":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='M')).sum()
-            elif time_format == "year":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='Y')).sum()
-            else:
-                raise Http404
-        elif product_type == "seafood":
-            data_brut = serializers.serialize('json', MProduct.objects.filter(category=2))
-            df = pd.DataFrame({
-                "datetime": list(map(self.tranform_date, data_brut)),
-                "dollars": list(map(self.tranform_dollars, data_brut))
-            })
-            if time_format == "day":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='D')).sum()
-            elif time_format == "month":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='M')).sum()
-            elif time_format == "year":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='Y')).sum()
-            else:
-                raise Http404
-        elif product_type == "all":
-            data_brut = serializers.serialize('json', MProduct.objects.all())
-            df = pd.DataFrame({
-                "datetime": list(map(self.tranform_date, data_brut)),
-                "dollars": list(map(self.tranform_dollars, data_brut))
-            })
-            if time_format == "day":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='D')).sum()
-            elif time_format == "month":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='M')).sum()
-            elif time_format == "year":
-                data_serie = df.groupby(pd.Grouper(
-                    key='datetime', freq='Y')).sum()
-            else:
-                raise Http404
-        else:
-            raise Http404
-        for i in range(0, data_serie.shape[0]):
-            res.append({
-                "date": str(data_serie.datetime[i]),
-                "revenues": data_serie.dollars[i]
-            })
-        return Response(res)
+        
+        iter = MProduct.objects.all()
+
+        if product_type == "poisson":
+            iter = MProduct.objects.filter(category=0)
+        elif product_type == "crustaces":
+            iter = MProduct.objects.filter(category=1)
+        elif product_type == "fruitsDeMer":
+            iter = MProduct.objects.filter(category=2)
+
+        produits = []
+
+        for product in iter:
+            serializer = ProductSerializer(product)
+            produits.append(serializer.data['tigID']) 
+
+        transactions = []
+
+        for transaction in MTransaction.objects.filter(tigID__in=produits):
+            serializer = TransactionSerializer(transaction)
+            transactions.append(serializer.data)
+
+        
+        return Response(transactions)
