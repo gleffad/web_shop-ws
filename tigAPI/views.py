@@ -9,29 +9,6 @@ from tigAPI.serializers import ProductSerializer, TransactionSerializer, UserSer
 from django.http import Http404, JsonResponse, HttpResponse
 import time
 
-class ProductFish(APIView):
-    def get(self, request, format=None) :
-        products = []
-        for product in MProduct.objects.filter(category=0):
-            serializer = ProductSerializer(product)
-            products.append(serializer.data)
-        return Response(products)
-
-class ProductShellfish(APIView):
-    def get(self, request, format=None) :
-        products = []
-        for product in MProduct.objects.filter(category=1):
-            serializer = ProductSerializer(product)
-            products.append(serializer.data)
-        return Response(products)
-
-class ProductSeafood(APIView):
-    def get(self, request, format=None) :
-        products = []
-        for product in MProduct.objects.filter(category=2):
-            serializer = ProductSerializer(product)
-            products.append(serializer.data)
-        return Response(products)
 
 class Product(APIView):
     def get_object(self, tigID):
@@ -50,6 +27,33 @@ class ProductList(APIView):
     def get(self, request, format=None):
         products = []
         for product in MProduct.objects.all():
+            serializer = ProductSerializer(product)
+            products.append(serializer.data)
+        return Response(products)
+
+
+class FishProductList(APIView):
+    def get(self, request, format=None):
+        products = []
+        for product in MProduct.objects.filter(category=0):
+            serializer = ProductSerializer(product)
+            products.append(serializer.data)
+        return Response(products)
+
+
+class ShellfishProductList(APIView):
+    def get(self, request, format=None):
+        products = []
+        for product in MProduct.objects.filter(category=1):
+            serializer = ProductSerializer(product)
+            products.append(serializer.data)
+        return Response(products)
+
+
+class SeafoodProductList(APIView):
+    def get(self, request, format=None):
+        products = []
+        for product in MProduct.objects.filter(category=2):
             serializer = ProductSerializer(product)
             products.append(serializer.data)
         return Response(products)
@@ -78,12 +82,9 @@ class TransactionList(APIView):
 
 
 class SetDiscount(APIView):
-
     def patch(self, request, format=None):
-        # ----------------------------------------
         tigID = request.data['tigID']
         discount = request.data['discount']
-        # ----------------------------------------
         product = MProduct.objects.filter(tigID=tigID)
         price = product[0].retail_price - \
             ((discount*product[0].retail_price)/100)
@@ -101,7 +102,10 @@ class SetDiscount(APIView):
 
 
 class DecrementStock(APIView):
-    def get(self, request, tigID, qty, operation, format=None):
+    def post(self, request, format=None):
+        tigID = request.data['tigID']
+        qty = request.data['qty']
+        operation = request.data['operation']
         product = MProduct.objects.filter(tigID=tigID)
         new_qty_stock = product[0].qty_stock - qty
         price = product[0].discount_price
@@ -134,10 +138,8 @@ class DecrementStock(APIView):
 
 class IncrementStock(APIView):
     def patch(self, request, format=None):
-        # ----------------------------------------
         tigID = request.data['tigID']
         qty = request.data['qty']
-        # ----------------------------------------
         product = MProduct.objects.filter(tigID=tigID)
         new_qty_stock = product[0].qty_stock + qty
         time_stamp = time.ctime()
@@ -159,91 +161,3 @@ class OnSaleProductList(APIView):
         on_sale_products = MProduct.objects.filter(on_sale=True)
         serialized = ProductSerializer(on_sale_products.get())
         return Response(serialized.data)
-
-
-'''
-class Removesale(APIView):
-    def update_object(self, tigID):
-        try:
-            MProduct.objects.filter(tigID=tigID).update(sale=False)
-        except MProduct.DoesNotExist:
-            raise Http404
-    def get(self, request, tigID, format=None):
-        self.update_object(tigID)
-        prod = MProduct.objects.get(tigID=tigID)
-        return Response(ProductSerializer(prod).data)
-
-class PutOnSale(APIView):
-    def update_object(self, tigID, newprice):
-        try:
-            MProduct.objects.filter(tigID=tigID).update(sale=True)
-            MProduct.objects.filter(tigID=tigID).update(discount=newprice)
-        except MProduct.DoesNotExist:
-            raise Http404
-    def get(self, request, tigID, newprice, format=None):
-        try:
-            value = float(newprice)
-        except:
-            raise Http404
-        self.update_object(tigID, newprice)
-        prod = MProduct.objects.get(tigID=tigID)
-        return Response(ProductSerializer(prod).data)
-
-class DetailsInfoProduct(APIView):
-    def get_object(self, tigID):
-        try:
-            return MProduct.objects.get(tigID=tigID)
-        except MProduct.DoesNotExist:
-            raise Http404
-    def get(self, request, tigID, format=None):
-        prod = self.get_object(tigID)
-        serializer = ProductSerializer(prod)
-        return Response(serializer.data)
-
-class InfoProducts(APIView):
-    def get(self, request, format=None):
-        res = []
-        for prod in MProduct.objects.all():
-            serializer = ProductSerializer(prod)
-            res.append(serializer.data)
-        return Response(res)
-
-
-class RedirectionListeDeProduits(APIView):
-    def get(self, request, format=None):
-        response = requests.get(baseUrl+'products/')
-        jsondata = response.json()
-        return Response(jsondata)
-
-class RedirectionDetailProduit(APIView):
-    def get_object(self, tigID):
-        try:
-            response = requests.get(baseUrl+'product/'+str(tigID)+'/')
-            jsondata = response.json()
-            return Response(jsondata)
-        except:
-            raise Http404
-    def get(self, request, tigID, format=None):
-        response = requests.get(baseUrl+'product/'+str(tigID)+'/')
-        jsondata = response.json()
-        return Response(jsondata)
-
-
-class PromoDetail(APIView):
-    def get_object(self, tigID):
-        try:
-            return ProductInSale.objects.get(tigID=tigID)
-        except ProductInSale.DoesNotExist:
-            raise Http404
-    def get(self, request, tigID, format=None):
-        prod = self.get_object(tigID)
-        serializer = ProductInSaleSerializer(prod)
-        response = requests.get(
-            baseUrl+'product/'+str(serializer.data['tigID'])+'/')
-        jsondata = response.json()
-        return Response(jsondata)
-
-class ProductListPerType(APIView):
-    def get(self, request, format=None, category):
-        return Response(TransactionSerializer(MTransaction.objects.filter(tigID=tigID))).data)
-'''
