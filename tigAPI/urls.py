@@ -11,11 +11,10 @@ urlpatterns = [
     path('transactions/', views.TransactionList.as_view()),
     path('transaction/<int:tigID>/', views.Transaction.as_view()),
     path('setdiscount/', views.SetDiscount.as_view()),
-    path('decrementstock/<int:tigID>/<int:qty>/<int:operation>/',
-         views.DecrementStock.as_view()),
+    path('decrementstock/', views.DecrementStock.as_view()),
     path('incrementstock/', views.IncrementStock.as_view())
 ]
 '''
-    path('<str:product_type>/comptability/<str:time_format>>', views.CustomComptability.as_view()),
+    path('<str:product_type>/comptability/<str:time_format>>', views.CustomComptability.as_view())
     path('comptability/<str:time_format>>', views.Comptability.as_view()),
 '''

@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from tigAPI.models import Transaction as MTransaction
 from tigAPI.serializers import TransactionSerializer
 import json
-import time
+from datetime import datetime
 
 
 class Command(BaseCommand):
@@ -10,8 +10,8 @@ class Command(BaseCommand):
         # transaction reset
         file = open('tigAPI/ressources/transactions.json')
         #log = open('tigAPI/activity_log.txt')
-        self.stdout.write('['+time.ctime()+'] Resetting transactions...')
-        #log.write('['+time.ctime()+'] Resetting transactions...')
+        self.stdout.write('['+datetime.now()+'] Resetting transactions...')
+        #log.write('['+datetime.now()+'] Resetting transactions...')
         jsondata = json.load(file)
         MTransaction.objects.all().delete()
         for transaction in jsondata:
@@ -25,8 +25,8 @@ class Command(BaseCommand):
             if serializer.is_valid():
                 serializer.save()
                 self.stdout.write(self.style.SUCCESS(
-                    '['+time.ctime()+'] Successfully added transaction from "%s"' % transaction['date']))
-        self.stdout.write('['+time.ctime()+'] MTransaction reset terminated.')
-        #log.write('['+time.ctime()+'] MTransaction reset terminated.')
+                    '['+datetime.now()+'] Successfully added transaction from "%s"' % transaction['date']))
+        self.stdout.write('['+datetime.now()+'] MTransaction reset terminated.')
+        #log.write('['+datetime.now()+'] MTransaction reset terminated.')
         file.close()
-        #log.close()
+        # log.close()

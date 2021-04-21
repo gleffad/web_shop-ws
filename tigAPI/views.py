@@ -7,7 +7,7 @@ from tigAPI.models import Transaction as MTransaction
 from tigAPI.models import User as MUser
 from tigAPI.serializers import ProductSerializer, TransactionSerializer, UserSerializer
 from django.http import Http404, JsonResponse, HttpResponse
-import time
+from datetime import datetime
 
 
 class Product(APIView):
@@ -109,7 +109,7 @@ class DecrementStock(APIView):
         product = MProduct.objects.filter(tigID=tigID)
         new_qty_stock = product[0].qty_stock - qty
         price = product[0].discount_price
-        time_stamp = time.ctime()
+        time_stamp = datetime.now()
         if new_qty_stock >= 0:
             product.update(qty_stock=new_qty_stock)
             if operation == 1:
@@ -142,9 +142,12 @@ class IncrementStock(APIView):
         qty = request.data['qty']
         product = MProduct.objects.filter(tigID=tigID)
         new_qty_stock = product[0].qty_stock + qty
-        time_stamp = time.ctime()
+        time_stamp = datetime.now()
         price = product[0].producer_price * qty
         product.update(qty_stock=new_qty_stock)
+        if product[0].discount_price == 0:
+            product.update(discount=0)
+            product.update(discount_price=product[0].retail_price)
         MTransaction.objects.create(
             tigID=tigID,
             date=time_stamp,
@@ -161,3 +164,7 @@ class OnSaleProductList(APIView):
         on_sale_products = MProduct.objects.filter(on_sale=True)
         serialized = ProductSerializer(on_sale_products.get())
         return Response(serialized.data)
+'''
+class CustomComptability(APIView):
+    def get(self, request, product_type, time_format, fromat=None):
+'''
