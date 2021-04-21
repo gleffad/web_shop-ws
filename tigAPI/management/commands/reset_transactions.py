@@ -10,8 +10,8 @@ class Command(BaseCommand):
         # transaction reset
         file = open('tigAPI/ressources/transactions.json')
         #log = open('tigAPI/activity_log.txt')
-        self.stdout.write('['+datetime.now()+'] Resetting transactions...')
-        #log.write('['+datetime.now()+'] Resetting transactions...')
+        self.stdout.write('['+str(datetime.now())+'] Resetting transactions...')
+        #log.write('['+str(datetime.now())+'] Resetting transactions...')
         jsondata = json.load(file)
         MTransaction.objects.all().delete()
         for transaction in jsondata:
@@ -25,8 +25,8 @@ class Command(BaseCommand):
             if serializer.is_valid():
                 serializer.save()
                 self.stdout.write(self.style.SUCCESS(
-                    '['+datetime.now()+'] Successfully added transaction from "%s"' % transaction['date']))
-        self.stdout.write('['+datetime.now()+'] MTransaction reset terminated.')
-        #log.write('['+datetime.now()+'] MTransaction reset terminated.')
+                    '['+str(datetime.now())+'] Successfully added transaction from "%s"' % transaction['date']))
+        self.stdout.write('['+str(datetime.now())+'] MTransaction reset terminated.')
+        #log.write('['+str(datetime.now())+'] MTransaction reset terminated.')
         file.close()
         # log.close()

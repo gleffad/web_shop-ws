@@ -9,7 +9,7 @@ from datetime import datetime
 class Command(BaseCommand):
     def handle(self, *args, **options):
         # product refresh
-        self.stdout.write('['+datetime.now()+'] Refreshing list of products...')
+        self.stdout.write('['+str(datetime.now())+'] Refreshing list of products...')
         ids = MProduct.objects.values_list('tigID', flat=True)
         response = requests.get(baseUrl+'products/')
         jsondata = response.json()
@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 if serializer.is_valid():
                     serializer.save()
                     self.stdout.write(self.style.SUCCESS(
-                        '['+datetime.now()+'] Successfully added product tigID="%s"' % product['id']))
+                        '['+str(datetime.now())+'] Successfully added product tigID="%s"' % product['id']))
                 else:
                     self.stderr(self.style.ERROR(serializer.errors))
-        self.stdout.write('[' + datetime.now() + '] Refresh ran successfully')
+        self.stdout.write('[' + str(datetime.now()) + '] Refresh ran successfully')

@@ -12,9 +12,6 @@ urlpatterns = [
     path('transaction/<int:tigID>/', views.Transaction.as_view()),
     path('setdiscount/', views.SetDiscount.as_view()),
     path('decrementstock/', views.DecrementStock.as_view()),
-    path('incrementstock/', views.IncrementStock.as_view())
+    path('incrementstock/', views.IncrementStock.as_view()),
+    path('comptability/', views.CustomComptability.as_view())
 ]
-'''
-    path('<str:product_type>/comptability/<str:time_format>>', views.CustomComptability.as_view())
-    path('comptability/<str:time_format>>', views.Comptability.as_view()),
-'''
