@@ -195,7 +195,7 @@ class CustomComptability(APIView):
 
         transactions = []
 
-        for transaction in MTransaction.objects.filter(tigID__in=produits):
+        for transaction in MTransaction.objects.filter(tigID__in=produits, operation=1):
             serializer = TransactionSerializer(transaction)
             transactions.append(serializer.data)
 
