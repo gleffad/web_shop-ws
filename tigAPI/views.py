@@ -78,7 +78,12 @@ class TransactionList(APIView):
 
 
 class SetDiscount(APIView):
-    def get(self, request, tigID, discount, format=None):
+
+    def patch(self, request, format=None):
+        # ----------------------------------------
+        tigID = request.data['tigID']
+        discount = request.data['discount']
+        # ----------------------------------------
         product = MProduct.objects.filter(tigID=tigID)
         price = product[0].retail_price - \
             ((discount*product[0].retail_price)/100)
@@ -128,7 +133,11 @@ class DecrementStock(APIView):
 
 
 class IncrementStock(APIView):
-    def get(self, request, tigID, qty, format=None):
+    def patch(self, request, format=None):
+        # ----------------------------------------
+        tigID = request.data['tigID']
+        qty = request.data['qty']
+        # ----------------------------------------
         product = MProduct.objects.filter(tigID=tigID)
         new_qty_stock = product[0].qty_stock + qty
         time_stamp = time.ctime()

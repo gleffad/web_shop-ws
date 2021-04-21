@@ -9,11 +9,10 @@ urlpatterns = [
     path('product/<int:tigID>/', views.Product.as_view()),
     path('transactions/', views.TransactionList.as_view()),
     path('transaction/<int:tigID>/', views.Transaction.as_view()),
-    path('setdiscount/<int:tigID>/<int:discount>/', views.SetDiscount.as_view()),
+    path('setdiscount/', views.SetDiscount.as_view()),
     path('decrementstock/<int:tigID>/<int:qty>/<int:operation>/',
          views.DecrementStock.as_view()),
-    path('incrementstock/<int:tigID>/<int:qty>/',
-         views.IncrementStock.as_view()),
+    path('incrementstock/', views.IncrementStock.as_view()),
     path('onsaleproducts/', views.OnSaleProductList.as_view())
 ]
 '''
