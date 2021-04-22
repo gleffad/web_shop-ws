@@ -176,7 +176,7 @@ class ProductGroup(APIView):
         MTransaction.objects.create(
             tigID=tigID,
             date=time_stamp,
-            price=price,
+            price=-price,
             quantity=qty,
             operation=0
         )
@@ -187,9 +187,6 @@ class ProductGroup(APIView):
             self.set_discount(transaction['tigID'], transaction['discount'])
 
             if transaction['stock'] != 0:
-                print("------------------")
-                print(transaction['operation'])
-                print("------------------")
                 if transaction['stock'] > 0:
                     self.increment_stock(transaction['tigID'], transaction['stock'])
                 elif transaction['stock'] < 0:
@@ -252,7 +249,7 @@ class IncrementStock(APIView):
         MTransaction.objects.create(
             tigID=tigID,
             date=time_stamp,
-            price=price,
+            price=-price,
             quantity=qty,
             operation=1
         )
@@ -298,7 +295,17 @@ class CustomComptability(APIView):
             produits.append(serializer.data['tigID'])
 
         transactions = []
-        qs = MTransaction.objects.filter(tigID__in=produits, operation=1)
+        print('--------------------')
+        print(request.data)
+        print(request.data['comptability'])
+        print('--------------------')
+
+        if str(request.data['comptability']) == "0":
+            qs = MTransaction.objects.filter(tigID__in=produits, operation=1)
+        elif str(request.data['comptability']) == "1":
+            qs = MTransaction.objects.filter(tigID__in=produits)
+            
+
 
         if not qs:
             return Response([])
