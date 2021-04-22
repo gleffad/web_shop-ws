@@ -10,8 +10,11 @@ from django.http import Http404, JsonResponse, HttpResponse
 from datetime import datetime
 import pandas as pd
 from django.core import serializers
+from rest_framework.permissions import IsAuthenticated
 
 class Product(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get_object(self, tigID):
         try:
             return MProduct.objects.get(tigID=tigID)
@@ -25,6 +28,8 @@ class Product(APIView):
 
 
 class ProductList(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         products = []
         for product in MProduct.objects.all():
@@ -34,6 +39,8 @@ class ProductList(APIView):
 
 
 class FishProductList(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         products = []
         for product in MProduct.objects.filter(category=0):
@@ -43,6 +50,8 @@ class FishProductList(APIView):
 
 
 class ShellfishProductList(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         products = []
         for product in MProduct.objects.filter(category=1):
@@ -52,6 +61,8 @@ class ShellfishProductList(APIView):
 
 
 class SeafoodProductList(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         products = []
         for product in MProduct.objects.filter(category=2):
@@ -61,6 +72,8 @@ class SeafoodProductList(APIView):
 
 
 class Transaction(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get_object(self, tigID):
         try:
             return MTransaction.objects.get(tigID=tigID)
@@ -74,6 +87,8 @@ class Transaction(APIView):
 
 
 class TransactionList(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         transactions = []
         for t in MTransaction.objects.all():
@@ -83,6 +98,8 @@ class TransactionList(APIView):
 
 
 class SetDiscount(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def patch(self, request, format=None):
         tigID = request.data['tigID']
         discount = request.data['discount']
@@ -103,6 +120,8 @@ class SetDiscount(APIView):
 
 
 class DecrementStock(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def post(self, request, format=None):
         tigID = request.data['tigID']
         qty = request.data['qty']
@@ -138,6 +157,8 @@ class DecrementStock(APIView):
 
 
 class IncrementStock(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def patch(self, request, format=None):
         tigID = request.data['tigID']
         qty = request.data['qty']
@@ -161,6 +182,8 @@ class IncrementStock(APIView):
 
 
 class OnSaleProductList(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         on_sale_products = MProduct.objects.filter(on_sale=True)
         serialized = ProductSerializer(on_sale_products.get())
@@ -168,6 +191,8 @@ class OnSaleProductList(APIView):
 
 
 class CustomComptability(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def tranform_date(self, t):
         return datetime.strptime(t["date"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
