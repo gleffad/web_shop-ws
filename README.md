@@ -1,97 +1,74 @@
 # Back Office Bateau Thibault (Django)
 
-## Environement virtuel
+## Virtual environnement
 
-Créer un environnement virtuel pour installer les dépendances et l'activer:
+Create a virtual environnement and activate it:
 
-- Sur linux
+- Linux
 
     ```
-    python3 -m venv env
+    python -m venv env
     source env/bin/activate
     ```
 
-- Sur Windows 10
+- Windows 10
 
     ```
     python -m venv env
     .\env\Scripts\activate
     ```
 
-## Installation des dépendances
+## Dependencies
 
-Ce mettre dans l'environement de travail et installer les depandance suivantes :
+Install dependencies :
 
-- Sur linux
-
-    ```
-    pip3 install django djangorestframework requests django-cors-headers pandas djangorestframework-simplejwt
-    ```
-
-- Sur Windows 10
+- Linux
 
     ```
     pip install django djangorestframework requests django-cors-headers pandas djangorestframework-simplejwt
     ```
 
-## Chargement de la base de donnée
-
-Une fois les dépandances installer, mettre a jour la base de donnée.
-
-- Sur linux
+- Windows 10
 
     ```
-    python3 manage.py migrate
-    python3 manage.py refresh
-    python3 manage.py reset_transactions
+    pip install django djangorestframework requests django-cors-headers pandas djangorestframework-simplejwt
     ```
 
-- Sur Windows 10
+## Load database 
+
+
+- Linux and windows 10
 
     ```
+    python manage.py makemigrations
     python manage.py migrate
     python manage.py refresh
     python manage.py reset_transactions
     ```
 
-## Création de l'utilisateur
+## Create user
 
-Pour accéder au site il faudra vous créer un utilisateur.
+To access the web-app features, you need a user account.
 
-- Sur linux
-
-    ```
-    python3 manage.py createsuperuser
-    ```
-
-- Sur Windows 10
+- Linux and Windows 10
 
     ```
     python manage.py createsuperuser
     ```
 
-Voici un exemplete d'utilisateur que vous pouriez crée
+Here is an exemple :
 
 ```
 username : admin
 email    : admin@admin.com
 password : admin
-byPass?  : Y
+byPass?  : Yolo
 ```
 
 ## Lancer le serveur 
 
-- Sur linux
-
-    ```
-    python3 manage.py runserver
-    ```
-
-- Sur Windows 10
+- Linux and Windows 10
 
     ```
     python manage.py runserver
     ```
-
-
-
