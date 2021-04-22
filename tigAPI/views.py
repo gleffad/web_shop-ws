@@ -295,10 +295,6 @@ class CustomComptability(APIView):
             produits.append(serializer.data['tigID'])
 
         transactions = []
-        print('--------------------')
-        print(request.data)
-        print(request.data['comptability'])
-        print('--------------------')
 
         if str(request.data['comptability']) == "0":
             qs = MTransaction.objects.filter(tigID__in=produits, operation=1)
