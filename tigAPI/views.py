@@ -194,8 +194,12 @@ class CustomComptability(APIView):
             produits.append(serializer.data['tigID']) 
 
         transactions = []
+        qs = MTransaction.objects.filter(tigID__in=produits, operation=1)
 
-        for transaction in MTransaction.objects.filter(tigID__in=produits, operation=1):
+        if not qs:
+            return Response([])
+
+        for transaction in qs:
             serializer = TransactionSerializer(transaction)
             transactions.append(serializer.data)
 

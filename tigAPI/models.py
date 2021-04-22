@@ -19,7 +19,7 @@ class Product(models.Model):
 
 
 class Transaction(models.Model):
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField()
     price = models.FloatField()
     quantity = models.IntegerField()
     tigID = models.IntegerField()

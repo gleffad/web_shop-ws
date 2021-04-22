@@ -1,9 +1,93 @@
 [
     {
-        "tigID": 0,
-        "price": 10,
-        "quantity": 5,
+        "tigID": 1,
+        "price": 5,
+        "quantity": 2,
         "date": "2021-04-06 14:46:49.221604",
-        "operation": 0
+        "operation": 1
+    },
+    {
+        "tigID": 2,
+        "price": 10,
+        "quantity": 1,
+        "date": "2021-04-07 14:46:49.221604",
+        "operation": 1
+    },
+    {
+        "tigID": 3,
+        "price": 2,
+        "quantity": 14,
+        "date": "2021-04-08 14:46:49.221604",
+        "operation": 1
+    },
+    {
+        "tigID": 4,
+        "price": 70,
+        "quantity": 2,
+        "date": "2021-04-09 14:46:49.221604",
+        "operation": 1
+    },
+    {
+        "tigID": 5,
+        "price": 23,
+        "quantity": 7,
+        "date": "2021-04-10 14:46:49.221604",
+        "operation": 1
+    },
+    {
+        "tigID": 12,
+        "price": 15,
+        "quantity": 2,
+        "date": "2021-05-01 14:46:49.221604",
+        "operation": 2
+    },
+    {
+        "tigID": 1,
+        "price": 8,
+        "quantity": 1,
+        "date": "2021-05-02 14:46:49.221604",
+        "operation": 1
+    },
+    {
+        "tigID": 2,
+        "price": 7,
+        "quantity": 2,
+        "date": "2022-07-02 14:46:49.221604",
+        "operation": 1
+    },
+    {
+        "tigID": 3,
+        "price": 20,
+        "quantity": 2,
+        "date": "2022-04-05 14:46:49.221604",
+        "operation": 1
+    },
+    {
+        "tigID": 4,
+        "price": 60,
+        "quantity": 7,
+        "date": "2022-01-09 14:46:49.221604",
+        "operation": 1
+    },
+    {
+        "tigID": 5,
+        "price": 12,
+        "quantity": 1,
+        "date": "2022-04-06 14:46:49.221604",
+        "operation": 2
+    },
+    {
+        "tigID": 12,
+        "price": 10,
+        "quantity": 8,
+        "date": "2022-10-02 14:46:49.221604",
+        "operation": 1
+    },
+    {
+        "tigID": 12,
+        "price": 10,
+        "quantity": 8,
+        "date": "2023-10-02 14:46:49.221604",
+        "operation": 1
     }
 ]
