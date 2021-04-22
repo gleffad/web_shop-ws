@@ -4,6 +4,7 @@ from tigAPI import views
 urlpatterns = [
     path('product/<int:tigID>/', views.Product.as_view()),
     path('products/', views.ProductList.as_view()),
+    path('productsGroup/', views.ProductGroup.as_view()),
     path('products/fish', views.FishProductList.as_view()),
     path('products/shellfish', views.ShellfishProductList.as_view()),
     path('products/seafood', views.SeafoodProductList.as_view()),

@@ -11,6 +11,7 @@ from datetime import datetime
 import pandas as pd
 from django.core import serializers
 
+
 class Product(APIView):
     def get_object(self, tigID):
         try:
@@ -102,6 +103,46 @@ class SetDiscount(APIView):
         return Response(serialized.data)
 
 
+class ProductGroup(APIView):
+    def set_discount(self, tigID, discount, format=None):
+        product = MProduct.objects.filter(tigID=tigID)
+        if discount == product[0].discount:
+            price = product[0].retail_price - \
+                ((discount*product[0].retail_price)/100)
+            if discount >= 0 and discount <= 100:
+                product.update(discount=discount)
+                product.update(discount_price=price)
+                if discount == 0:
+                    product.update(on_sale=False)
+                else:
+                    product.update(on_sale=True)
+            else:
+                raise Http404
+
+    def increment_stock(self, tigID, qty, format=None):
+        product = MProduct.objects.filter(tigID=tigID)
+        new_qty_stock = product[0].qty_stock + qty
+        time_stamp = datetime.now()
+        price = product[0].producer_price * qty
+        product.update(qty_stock=new_qty_stock)
+        if product[0].discount_price == 0:
+            product.update(discount=0)
+            product.update(discount_price=product[0].retail_price)
+        MTransaction.objects.create(
+            tigID=tigID,
+            date=time_stamp,
+            price=price,
+            quantity=qty,
+            operation=2
+        )
+
+    def post(self, request, format=None):
+        self.set_discount(request.data['tigID'], request.data['discount'])
+        self.increment_stock(request.data['tigID'], request.data['quantity'])
+        serialized = ProductSerializer(MProduct.objects.get(tigID=tigID))
+        return Response(serialized.data)
+
+
 class DecrementStock(APIView):
     def post(self, request, format=None):
         tigID = request.data['tigID']
@@ -177,7 +218,7 @@ class CustomComptability(APIView):
     def post(self, request, fromat=None):
         product_type = request.data['product_type']
         time_format = request.data['time_format']
-        
+
         iter = MProduct.objects.all()
 
         if product_type == "fish":
@@ -191,7 +232,7 @@ class CustomComptability(APIView):
 
         for product in iter:
             serializer = ProductSerializer(product)
-            produits.append(serializer.data['tigID']) 
+            produits.append(serializer.data['tigID'])
 
         transactions = []
         qs = MTransaction.objects.filter(tigID__in=produits, operation=1)
@@ -204,27 +245,30 @@ class CustomComptability(APIView):
             transactions.append(serializer.data)
 
         data = {
-            "datetime" : list(map(self.tranform_date, transactions)),
-            "dollars" : list(map(self.tranform_dollars, transactions))
+            "datetime": list(map(self.tranform_date, transactions)),
+            "dollars": list(map(self.tranform_dollars, transactions))
         }
 
         df = pd.DataFrame(data)
 
         result = []
         if time_format == "day":
-            result = df.groupby(pd.Grouper(key='datetime', freq='D')).sum().reset_index()
+            result = df.groupby(pd.Grouper(
+                key='datetime', freq='D')).sum().reset_index()
         elif time_format == "month":
-            result = df.groupby(pd.Grouper(key='datetime', freq='M')).sum().reset_index()
+            result = df.groupby(pd.Grouper(
+                key='datetime', freq='M')).sum().reset_index()
         elif time_format == "year":
-            result = df.groupby(pd.Grouper(key='datetime', freq='Y')).sum().reset_index()
+            result = df.groupby(pd.Grouper(
+                key='datetime', freq='Y')).sum().reset_index()
         else:
             raise Http404
 
         res = []
         for i in range(0, result.shape[0]):
             res.append({
-                "date" : str(result.datetime[i]),
-                "revenues" : result.dollars[i]
+                "date": str(result.datetime[i]),
+                "revenues": result.dollars[i]
             })
 
         return Response(res)
