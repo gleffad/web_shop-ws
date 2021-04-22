@@ -1,5 +1,9 @@
 from django.urls import path
 from tigAPI import views
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [
     path('product/<int:tigID>/', views.Product.as_view()),
@@ -14,5 +18,9 @@ urlpatterns = [
     path('setdiscount/', views.SetDiscount.as_view()),
     path('decrementstock/', views.DecrementStock.as_view()),
     path('incrementstock/', views.IncrementStock.as_view()),
-    path('comptability/', views.CustomComptability.as_view())
+    path('comptability/', views.CustomComptability.as_view()),
+
+    # JWT
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
