@@ -121,9 +121,38 @@ class SetDiscount(APIView):
 
 
 class ProductGroup(APIView):
-    def set_discount(self, tigID, discount, format=None):
+    def decrement_stock(self, tigID, qty, operation):
         product = MProduct.objects.filter(tigID=tigID)
-        if discount == product[0].discount:
+        new_qty_stock = product[0].qty_stock - qty
+        price = product[0].discount_price
+        time_stamp = datetime.now()
+        if new_qty_stock >= 0:
+            product.update(qty_stock=new_qty_stock)
+            if operation == 1:
+                MTransaction.objects.create(
+                    tigID=tigID,
+                    date=time_stamp,
+                    price=price,
+                    quantity=qty,
+                    operation=operation
+                )
+            elif operation == 2:
+                MTransaction.objects.create(
+                    tigID=tigID,
+                    date=time_stamp,
+                    price=0,
+                    quantity=qty,
+                    operation=operation
+                )
+            else:
+                raise Http404
+        else:
+            raise Http404
+        serialized = ProductSerializer(product.get())
+
+    def set_discount(self, tigID, discount):
+        product = MProduct.objects.filter(tigID=tigID)
+        if discount != product[0].discount:
             price = product[0].retail_price - \
                 ((discount*product[0].retail_price)/100)
             if discount >= 0 and discount <= 100:
@@ -136,7 +165,7 @@ class ProductGroup(APIView):
             else:
                 raise Http404
 
-    def increment_stock(self, tigID, qty, format=None):
+    def increment_stock(self, tigID, qty):
         product = MProduct.objects.filter(tigID=tigID)
         new_qty_stock = product[0].qty_stock + qty
         time_stamp = datetime.now()
@@ -150,14 +179,24 @@ class ProductGroup(APIView):
             date=time_stamp,
             price=price,
             quantity=qty,
-            operation=2
+            operation=0
         )
 
     def post(self, request, format=None):
-        self.set_discount(request.data['tigID'], request.data['discount'])
-        self.increment_stock(request.data['tigID'], request.data['quantity'])
-        serialized = ProductSerializer(MProduct.objects.get(tigID=tigID))
-        return Response(serialized.data)
+        data = request.data
+        for transaction in data:
+            self.set_discount(transaction['tigID'], transaction['discount'])
+
+            if transaction['stock'] != 0:
+                print("------------------")
+                print(transaction['operation'])
+                print("------------------")
+                if transaction['stock'] > 0:
+                    self.increment_stock(transaction['tigID'], transaction['stock'])
+                elif transaction['stock'] < 0:
+                    self.decrement_stock(transaction['tigID'], transaction['stock'] * (-1), transaction['operation'])
+
+        return Response([])
 
 
 class DecrementStock(APIView):
@@ -216,7 +255,7 @@ class IncrementStock(APIView):
             date=time_stamp,
             price=price,
             quantity=qty,
-            operation=2
+            operation=1
         )
         serialized = ProductSerializer(product.get())
         return Response(serialized.data)
