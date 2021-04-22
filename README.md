@@ -65,7 +65,7 @@ password : admin
 byPass?  : Yolo
 ```
 
-## Lancer le serveur 
+## Launch Web-service
 
 - Linux and Windows 10
 
