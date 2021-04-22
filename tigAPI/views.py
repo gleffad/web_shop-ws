@@ -12,7 +12,6 @@ import pandas as pd
 from django.core import serializers
 from rest_framework.permissions import IsAuthenticated
 
-
 class Product(APIView):
     permission_classes = (IsAuthenticated,)
 
